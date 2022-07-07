@@ -9,7 +9,8 @@
  */
 
 const unzipper = require('unzipper');
-const fs = require('fs');
+const fs = require('fs').promises;
+const { createReadStream, createWriteStream } = require('fs');
 const PNG = require('pngjs').PNG;
 const path = require('path');
 
@@ -20,53 +21,16 @@ const path = require('path');
  * @param {string} pathOut
  * @return {promise}
  */
-const unzip = (pathIn, pathOut) => {
-  return new Promise((resolve, reject) => {
-    if (!fs.existsSync(pathIn)) {
-      return reject(`\nFile  ---> '${pathIn}' does not exist.`);
-    }
-    fs.createReadStream(path.join(__dirname, pathIn)).pipe(
-      unzipper.Extract({ path: path.join(__dirname, pathOut) })
-    );
-    resolve();
-  });
-};
 
-unzip('./assets/myfile.zip', './assets/unzipped')
-  .then(() => console.log('File unzipped successfully'))
-  .catch((err) => console.log('There was an error:', err));
+const read = (path) => {
+	fs.readdir(path);
+}
 /**
  * Description: read all the png files from given directory and return Promise containing array of each png file path
  *
  * @param {string} path
  * @return {promise}
  */
-const readDir = (dir) => {
-  return new Promise((resolve, reject) => {
-    fs.readdir(dir, (err, files) => {
-      if (err) {
-        if (err.code == 'ENOENT') {
-          reject(`\nDirectory --> '${dir}' does not exist.`);
-        } else {
-          reject('Something went wrong:', err);
-        }
-      }
-      resolve(files);
-      return
-    });
-  });
-};
-
-readDir('./assets/unzipped')
-  .then((files) => {
-    const filesArr = files.map(file =>
-    path.join('assets/unzipped', file))
-        // .filter(files => files.endsWith('.png'))
-        .filter(file => path.extname(file) ==='.png')
-    return filesArr;
-    })
-  .then((filesArr) => console.log(filesArr))
-  .catch((err) => console.log('\nThere was an error:', err + '\n'));
 
 /**
  * Description: Read in png file by given pathIn,
@@ -80,6 +44,7 @@ const grayScale = (pathIn, pathOut) => {};
 
 module.exports = {
   // unzip,
-  readDir,
-  grayScale,
+  // readDir,
+  // grayScale,
+	read
 };

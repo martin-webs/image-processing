@@ -8,9 +8,10 @@
  * 
  */
 
-const IOhandler = require("./IOhandler"),
+// const IOhandler = require("./IOhandlerx"),
+const { read } = require("./IOhandler"),
   zipFilePath = `${__dirname}/myfile.zip`,
   pathUnzipped = `${__dirname}/unzipped`,
   pathProcessed = `${__dirname}/grayscaled`;
 
-
+ read(pathUnzipped);
