@@ -5,9 +5,8 @@
   "dependencies": {
     "node-fetch": "^2.6.0",
     "pngjs": "^3.4.0",
-    "unzipper": "^0.10.5"
+    "unzipper": "^0.10.11"
   },
-  "devDependencies": {},
   "scripts": {
     "test": "jest --env node"
   },
