@@ -9,6 +9,7 @@
  */
 
 const unzipper = require('unzipper');
+const fsSync = require('fs');
 const fs = require('fs').promises;
 const { createReadStream, createWriteStream } = require('fs');
 const PNG = require('pngjs').PNG;
@@ -21,16 +22,37 @@ const path = require('path');
  * @param {string} pathOut
  * @return {promise}
  */
+const unzip = (pathIn, pathOut) => {
+  if (fsSync.existsSync(pathIn)) {
+    return createReadStream(pathIn)
+      .pipe(unzipper.Extract({ path: pathOut }))
+      .promise()
+      .then(() => pathOut)
+      .catch((err) => console.log('Error from unzip:', err));
+  } else {
+    console.log('Zip file does not exist in the given path');
+  }
+};
 
-const read = (path) => {
-	fs.readdir(path);
-}
 /**
  * Description: read all the png files from given directory and return Promise containing array of each png file path
  *
  * @param {string} path
  * @return {promise}
  */
+const readDir = (dir) => {
+  if (!fsSync.existsSync(dir) || typeof dir === undefined) {
+    throw new Error('Directory does not exist');
+  }
+  return fs.readdir(dir)
+    .then((files) => {
+      const filesArr = files
+        .map((file) => path.join(dir, file))
+        .filter((file) => path.extname(file) === '.png');
+      console.log(filesArr);
+    })
+    .catch((err) => console.log('Error from readDir:', err));
+};
 
 /**
  * Description: Read in png file by given pathIn,
@@ -43,8 +65,7 @@ const read = (path) => {
 const grayScale = (pathIn, pathOut) => {};
 
 module.exports = {
-  // unzip,
-  // readDir,
+  unzip,
+  readDir,
   // grayScale,
-	read
 };
