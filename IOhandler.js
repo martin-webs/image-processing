@@ -8,12 +8,12 @@
  *
  */
 
-const unzipper = require('unzipper');
-const fsSync = require('fs');
-const fs = require('fs').promises;
-const { createReadStream, createWriteStream } = require('fs');
-const PNG = require('pngjs').PNG;
-const path = require('path');
+const unzipper = require('unzipper'),
+  fsSync = require('fs'),
+  fs = require('fs').promises,
+  { createReadStream, createWriteStream } = require('fs'),
+  PNG = require('pngjs').PNG,
+  path = require('path');
 
 /**
  * Description: decompress file from given pathIn, write to given pathOut
@@ -44,7 +44,8 @@ const readDir = (dir) => {
   if (!fsSync.existsSync(dir) || typeof dir === undefined) {
     throw new Error('Directory does not exist');
   }
-  return fs.readdir(dir)
+  return fs
+    .readdir(dir)
     .then((files) => {
       const filesArr = files
         .map((file) => path.join(dir, file))
