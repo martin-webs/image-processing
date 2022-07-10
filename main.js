@@ -16,7 +16,10 @@ const { unzip, readDir, grayScale } = require('./IOhandler'),
 
 unzip(zipFilePath, pathUnzipped)
   .then((pathToRead) => readDir(pathToRead))
-  .then(files => files.forEach(file => grayScale(file, pathProcessed)))
+  .then(files => {
+    for(const file of files) {
+      grayScale(file, `${pathProcessed}/${files.indexOf(file)}.png`);
+    }
+  })
   .catch((err) => console.log('Error from main.js: ', err));
 
-// grayScale('./unzipped/in.png', pathProcessed)

@@ -9,7 +9,7 @@
  */
 
 const unzipper = require('unzipper'),
-  // fsSync = require('fs'),
+  fsSync = require('fs'),
   fs = require('fs').promises,
   { createReadStream, createWriteStream } = require('fs'),
   PNG = require('pngjs').PNG,
@@ -36,7 +36,7 @@ const unzip = (pathIn, pathOut) => {
 /**
  * Description: read all the png files from given directory and return Promise containing array of each png file path
  *
- * @param {string} path
+ * @param {string} path // changed 'path' to 'dir' to avoid conflict with nodejs path module
  * @return {promise}
  */
 const readDir = (dir) => {
@@ -60,12 +60,12 @@ const readDir = (dir) => {
  * @param {string} pathProcessed
  * @return {promise}
  */
-const grayScale = (pathIn, pathOut) => {
-  return new Promise((resolve, reject) => {
+const grayScale = (filePath, pathProcessed) => {
+  // return new Promise((resolve, reject) => {
     //   // .then(() => {
     let png = new PNG({ filterType: -1 });
-    let src = createReadStream(pathIn);
-    let dst = createWriteStream(pathOut);
+    let src = createReadStream(filePath);
+    let dst = createWriteStream(pathProcessed);
 
     png.on('parsed', function () {
       for (let i = 0; i < this.data.length; i += 4) {
@@ -83,7 +83,7 @@ const grayScale = (pathIn, pathOut) => {
     src.pipe(png);
 
     // resolve('Grayscale conversion successful');
-  });
+  // });
   // .catch((err) => console.log('Error from readFile:(YEY!)', err));
 };
 
