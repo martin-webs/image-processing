@@ -9,7 +9,7 @@
  */
 
 const unzipper = require('unzipper'),
-  fsSync = require('fs'),
+  // fsSync = require('fs'),
   fs = require('fs').promises,
   { createReadStream, createWriteStream } = require('fs'),
   PNG = require('pngjs').PNG,
@@ -23,15 +23,14 @@ const unzipper = require('unzipper'),
  * @return {promise}
  */
 const unzip = (pathIn, pathOut) => {
-  if (fsSync.existsSync(pathIn)) {
-    return createReadStream(pathIn)
-      .pipe(unzipper.Extract({ path: pathOut }))
-      .promise()
-      .then(() => pathOut)
-      .catch((err) => console.log('Error from unzip:', err));
-  } else {
-    console.log('Zip file does not exist in the given path');
-  }
+  // if (!fsSync.existsSync(pathIn)) {
+  //   console.log('Zip file does not exist in the given path');
+  // }
+  return createReadStream(pathIn)
+    .pipe(unzipper.Extract({ path: pathOut }))
+    .promise()
+    .then(() => pathOut)
+    .catch((err) => console.log('Error from unzip:', err));
 };
 
 /**
@@ -41,16 +40,14 @@ const unzip = (pathIn, pathOut) => {
  * @return {promise}
  */
 const readDir = (dir) => {
-  if (!fsSync.existsSync(dir) || typeof dir === undefined) {
-    throw new Error('Directory does not exist');
-  }
   return fs
     .readdir(dir)
     .then((files) => {
       const filesArr = files
         .map((file) => path.join(dir, file))
         .filter((file) => path.extname(file) === '.png');
-      console.log(filesArr);
+      // console.log(filesArr);
+      return filesArr;
     })
     .catch((err) => console.log('Error from readDir:', err));
 };
@@ -63,10 +60,35 @@ const readDir = (dir) => {
  * @param {string} pathProcessed
  * @return {promise}
  */
-const grayScale = (pathIn, pathOut) => {};
+const grayScale = (pathIn, pathOut) => {
+  return new Promise((resolve, reject) => {
+    //   // .then(() => {
+    let png = new PNG({ filterType: -1 });
+    let src = createReadStream(pathIn);
+    let dst = createWriteStream(pathOut);
+
+    png.on('parsed', function () {
+      for (let i = 0; i < this.data.length; i += 4) {
+        let r = this.data[i];
+        let g = this.data[i + 1];
+        let b = this.data[i + 2];
+        let gray = (Math.min(r, g, b) + Math.max(r, g, b)) / 2;
+        this.data[i] = gray;
+        this.data[i + 1] = gray;
+        this.data[i + 2] = gray;
+      }
+      png.pack().pipe(dst);
+    });
+
+    src.pipe(png);
+
+    // resolve('Grayscale conversion successful');
+  });
+  // .catch((err) => console.log('Error from readFile:(YEY!)', err));
+};
 
 module.exports = {
   unzip,
   readDir,
-  // grayScale,
+  grayScale,
 };
