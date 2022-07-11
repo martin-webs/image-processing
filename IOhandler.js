@@ -23,14 +23,15 @@ const unzipper = require('unzipper'),
  * @return {promise}
  */
 const unzip = (pathIn, pathOut) => {
-  // if (!fsSync.existsSync(pathIn)) {
-  //   console.log('Zip file does not exist in the given path');
-  // }
-  return createReadStream(pathIn)
-    .pipe(unzipper.Extract({ path: pathOut }))
-    .promise()
-    .then(() => pathOut)
-    .catch((err) => console.log('Error from unzip:', err));
+  if (!fsSync.existsSync(pathIn) || !fsSync.existsSync(pathOut)) {
+    throw new Error('Source or destination file does not exist\n');
+  } else {
+    return createReadStream(pathIn)
+      .pipe(unzipper.Extract({ path: pathOut }))
+      .promise()
+      .then(() => pathOut)
+      .catch((err) => console.error('Error from unzip:\n', err));
+  }
 };
 
 /**
@@ -46,10 +47,9 @@ const readDir = (dir) => {
       const filesArr = files
         .map((file) => path.join(dir, file))
         .filter((file) => path.extname(file) === '.png');
-      // console.log(filesArr);
       return filesArr;
     })
-    .catch((err) => console.log('Error from readDir:', err));
+    .catch((err) => console.error('Error from readDir:\n', err));
 };
 
 /**
@@ -61,8 +61,6 @@ const readDir = (dir) => {
  * @return {promise}
  */
 const grayScale = (filePath, pathProcessed) => {
-  // return new Promise((resolve, reject) => {
-    //   // .then(() => {
     let png = new PNG({ filterType: -1 });
     let src = createReadStream(filePath);
     let dst = createWriteStream(pathProcessed);
@@ -79,12 +77,7 @@ const grayScale = (filePath, pathProcessed) => {
       }
       png.pack().pipe(dst);
     });
-
     src.pipe(png);
-
-    // resolve('Grayscale conversion successful');
-  // });
-  // .catch((err) => console.log('Error from readFile:(YEY!)', err));
 };
 
 module.exports = {
