@@ -23,7 +23,7 @@ const unzipper = require('unzipper'),
  * @return {promise}
  */
 const unzip = (pathIn, pathOut) => {
-  if (!fsSync.existsSync(pathIn) || !fsSync.existsSync(pathOut)) {
+  if (!fsSync.existsSync(pathIn)) {
     throw new Error('Source or destination file does not exist\n');
   } else {
     return createReadStream(pathIn)
@@ -61,6 +61,7 @@ const readDir = (dir) => {
  * @return {promise}
  */
 const grayScale = (filePath, pathProcessed) => {
+    
     let png = new PNG({ filterType: -1 });
     let src = createReadStream(filePath);
     let dst = createWriteStream(pathProcessed);
