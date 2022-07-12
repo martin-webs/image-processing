@@ -1,10 +1,9 @@
 /*
  * Project: COMP1320 Milestone 1
  * File Name: main.js
- * Description:
- *
- * Created Date:
- * Author:
+ * Description: Main file that will unzip, read and process png files
+ * Created Date: June 30, 2022
+ * Author: Martin Perez
  *
  */
 

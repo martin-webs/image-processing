@@ -1,8 +1,7 @@
 /*
  * Project: Image Processing
  * File Name: IOhandler.js
- * Description: Collection of functions for files input/output related operations
- *
+ * Description: This file contains logic to unzip, read and process png files
  * Created Date: June 30, 2022
  * Author: Martin Perez
  *
@@ -29,7 +28,10 @@ const unzip = (pathIn, pathOut) => {
     return createReadStream(pathIn)
       .pipe(unzipper.Extract({ path: pathOut }))
       .promise()
-      .then(() => pathOut)
+      .then(() => {
+        console.log('Extraction operation complete!');
+        return pathOut
+      })
       .catch((err) => console.error('Error from unzip:\n', err));
   }
 };
